@@ -1,0 +1,32 @@
+import pandas as pd
+import matplotlib.pyplot as plt
+
+top_15 = ['eng', 'cmn', 'hin', 'spa', 'fra', 'arb', 'ben', 'rus', 'por', 'ind', 'urd', 'jpn', 'deu', 'tur', 'kor']
+
+# keep rows in df where column 'ISO_1' and 'ISO_2' are in top_15
+df = pd.read_table('language_sim.tsv')
+df = df[df['ISO_1'].isin(top_15) & df['ISO_2'].isin(top_15)]
+
+pivot_table = df.pivot(index='LangName_1', columns='LangName_2', values='Similarity')
+fig, ax = plt.subplots()
+im = ax.imshow(pivot_table.values)
+
+# set x and y ticks and labels
+ax.set_xticks(range(len(pivot_table.columns)))
+ax.set_xticklabels(pivot_table.columns)
+ax.set_yticks(range(len(pivot_table.index)))
+ax.set_yticklabels(pivot_table.index)
+
+# rotate x tick labels for better readability
+plt.setp(ax.get_xticklabels(), rotation=45, ha='right', rotation_mode='anchor')
+
+# add colorbar
+cbar = ax.figure.colorbar(im, ax=ax)
+
+# add title and axis labels
+ax.set_title('Pairwise Similarity Scores of Top 20 Languages')
+ax.set_xlabel('Language Code 2')
+ax.set_ylabel('Language Code 1')
+
+# show plot
+plt.show()
